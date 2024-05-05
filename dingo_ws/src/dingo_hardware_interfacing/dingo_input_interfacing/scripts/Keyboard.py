@@ -3,6 +3,7 @@ import sys, signal
 import os
 from pynput import keyboard
 from sensor_msgs.msg import Joy
+from dingo_control.msg import ConCir
 
 class Keyboard:
     def __init__(self):
@@ -13,11 +14,29 @@ class Keyboard:
             on_press=self.on_press,
             on_release=self.on_release)
         self.keyboard_listener.start()
+        
+        
 
         self.current_joy_message = Joy()
         self.current_joy_message.axes = [0.,0.,0.,0.,0.,0.,0.,0.]
         self.current_joy_message.buttons = [0,0,0,0,0,0,0,0,0,0,0]
-
+        
+    def update_inputs(self, inputString):
+        #inputlis = inputString.split('\"')
+        #inputString = inputlis[1]
+        inputString= inputString.string
+        inputs = []
+        inputString = str(inputString)
+        for ch in inputString:
+            inputs.append(int(ch))
+        # inputs[togglewalk, forwards/-backwards, left/-right, yawleft/-yawright]
+        msg = self.current_joy_message
+        msg.buttons[5] = inputs[0]
+        msg.axes[1] = inputs[1]*0.5*self.speed_multiplier
+        msg.axes[0] = inputs[2]*0.5*self.speed_multiplier
+        msg.axes[2] = inputs[3]*0.5*self.speed_multiplier
+        self.current_joy_message = msg
+    	
         
     def on_press(self,key):
         if hasattr(key, 'char'):
@@ -122,6 +141,8 @@ def main():
 
     signal.signal(signal.SIGINT, signal_handler)
     keyboard_listener = Keyboard()
+    
+    control_listener = rospy.Subscriber('control_circuit', ConCir, keyboard_listener.update_inputs)
 
     while not rospy.is_shutdown():
         keyboard_listener.publish_current_command()

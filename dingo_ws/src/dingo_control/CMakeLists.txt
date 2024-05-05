@@ -50,6 +50,7 @@ find_package(catkin REQUIRED COMPONENTS
    TaskSpace.msg
    JointSpace.msg
    Angle.msg
+   ConCir.msg
 #   Message2.msg
  )
 

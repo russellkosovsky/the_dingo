@@ -47,8 +47,7 @@ catkin_python_setup()
 ## Generate messages in the 'msg' folder
 # add_message_files(
 #   FILES
-#   Message1.msg
-#   Message2.msg
+#   ConCir.msg
 # )
 
 ## Generate services in the 'srv' folder
@@ -160,6 +159,7 @@ include_directories(
 catkin_install_python(PROGRAMS
    scripts/run_robot.py
    scripts/dingo_driver.py
+   scripts/control.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 ## Mark executables for installation
